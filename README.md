@@ -35,14 +35,14 @@ content: Consideration of methods for anonymizing personal data.
 ### Creating a model for determining the cost of a car
 content: Development of a system for recommending the cost of a car based on its description.
 
-## Studying the patterns that determine the success of games
+### Studying the patterns that determine the success of games
 content: Using historical data on sales of games, user and expert ratings, genres and platforms, identify patterns that determine the success of a game.
 
-## Forecasting the number of taxi orders for the next hour
+### Forecasting the number of taxi orders for the next hour
 content: Development of a system for predicting the number of taxi orders.
 
-## Comment classification
+### Comment classification
 content: Definition of comments toxicity .
 
-## Photo processing
+### Photo processing
 content: Determination of age from a photo.
