@@ -6,3 +6,10 @@ Project objectives: The main objective is to investigate the influence of the cl
 
 ## Tools and skills:
 data preprocessing, pandas, PyMystem3, lemmatization, SciPy, Matplotlib, Seaborn, plotly, numpy
+
+## Conclusions:
+Questions answered
+Is there a relationship between the number of children and loan repayment on time?
+Is there a relationship between marital status and loan repayment on time?
+Is there a relationship between income level and loan repayment on time?
+How do different purposes of a loan affect its repayment on time?
