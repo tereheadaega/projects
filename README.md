@@ -11,7 +11,7 @@ This repository contains over ten projects about machine learning and data analy
 ### [Banking data analysis](https://github.com/tereheadaega/projects/tree/main/Banking%20data%20analysis)
 content: On the basis of statistics on the solvency of clients, the problem is to investigate whether the marital status and the number of children of the client affect the fact of repaying the loan on time.
 
-### Real estate market analysis
+### [Real estate market analysis](https://github.com/tereheadaega/projects/tree/main/Real%20estate%20market%20analysis)
 content: the problem is to determine the market value of real estate and typical parameters of apartments.
 
 ### Determination of a favorable tariff for a telecom company
