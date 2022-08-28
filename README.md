@@ -8,6 +8,9 @@ I am developing proficiency in Python and its data analysis libraries (Numpy, Pa
 
 This repository contains over ten projects about machine learning and data analysis.
 
+### [Alloy Temperature Prediction](https://github.com/tereheadaega/projects/tree/main/Alloy%20Temperature%20Prediction)
+content: optimize production costs by building a model that predicts the steel temperature.
+
 ### [Banking data analysis](https://github.com/tereheadaega/projects/tree/main/Banking%20data%20analysis)
 content: On the basis of statistics on the solvency of clients, the problem is to investigate whether the marital status and the number of children of the client affect the fact of repaying the loan on time.
 
