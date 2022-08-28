@@ -26,13 +26,13 @@ content: Propose a tariff based on customer data.
 ### [Forecasting the Bank's customer churn](https://github.com/tereheadaega/projects/tree/main/Forecasting%20the%20Bank's%20customer%20churn)
 content: Based on data from the bank, determine the client who can leave.
 
-### Determination of the most profitable oil production region
+### [Determination of the most profitable oil production region](https://github.com/tereheadaega/projects/tree/main/Determination%20of%20the%20most%20profitable%20oil%20production%20region)
 content: Based on the data, exploration geologists choose the best oil production area.
 
-### Protection of data of clients of the insurance company
+### [Protection of data of clients of the insurance company](https://github.com/tereheadaega/projects/tree/main/Protection%20of%20data%20of%20clients%20of%20the%20insurance%20company)
 content: Consideration of methods for anonymizing personal data.
 
-### Creating a model for determining the cost of a car
+### [Creating a model for determining the cost of a car](https://github.com/tereheadaega/projects/tree/main/Creating%20a%20model%20for%20determining%20the%20cost%20of%20a%20car)
 content: Development of a system for recommending the cost of a car based on its description.
 
 ### Studying the patterns that determine the success of games
