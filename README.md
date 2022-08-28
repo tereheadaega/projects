@@ -17,10 +17,10 @@ content: On the basis of statistics on the solvency of clients, the problem is t
 ### [Real estate market analysis](https://github.com/tereheadaega/projects/tree/main/Real%20estate%20market%20analysis)
 content: the problem is to determine the market value of real estate and typical parameters of apartments.
 
-### Determination of a favorable tariff for a telecom company
+### [Determination of a favorable tariff for a telecom company](https://github.com/tereheadaega/projects/tree/main/Determination%20of%20a%20favorable%20tariff%20for%20a%20telecom%20company)
 content: Based on the data of the mobile operator, analyze the behavior of customers and search for the optimal tariff
 
-### Telecom company customer classification
+### [Telecom company customer classification](https://github.com/tereheadaega/projects/tree/main/Telecom%20company%20customer%20classification)
 content: Propose a tariff based on customer data.
 
 ### Forecasting the Bank's customer churn
