@@ -23,14 +23,11 @@ content: Based on the data of the mobile operator, analyze the behavior of custo
 ### [Telecom company customer classification](https://github.com/tereheadaega/projects/tree/main/Telecom%20company%20customer%20classification)
 content: Propose a tariff based on customer data.
 
-### Forecasting the Bank's customer churn
+### [Forecasting the Bank's customer churn](https://github.com/tereheadaega/projects/tree/main/Forecasting%20the%20Bank's%20customer%20churn)
 content: Based on data from the bank, determine the client who can leave.
 
 ### Determination of the most profitable oil production region
 content: Based on the data, exploration geologists choose the best oil production area.
-
-### Study of the technological process of gold refining
-content: Using data of gold refining process,  predict the concentration of gold.
 
 ### Protection of data of clients of the insurance company
 content: Consideration of methods for anonymizing personal data.
