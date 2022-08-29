@@ -1,4 +1,4 @@
-# projects from Yandex Practicum
+# My projects from Yandex Practicum
  
  This repository contains projects I have done under Yandex Practicum
 
