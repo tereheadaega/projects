@@ -1,4 +1,4 @@
-# projects from Yandex Practicum
+# My projects from Yandex Practicum
  
  This repository contains projects I have done under Yandex Practicum
 
@@ -35,14 +35,14 @@ content: Consideration of methods for anonymizing personal data.
 ### [Creating a model for determining the cost of a car](https://github.com/tereheadaega/projects/tree/main/Creating%20a%20model%20for%20determining%20the%20cost%20of%20a%20car)
 content: Development of a system for recommending the cost of a car based on its description.
 
-### Studying the patterns that determine the success of games
+### [Studying the patterns that determine the success of games](https://github.com/tereheadaega/projects/tree/main/Studying%20the%20patterns%20that%20determine%20the%20success%20of%20games)
 content: Using historical data on sales of games, user and expert ratings, genres and platforms, identify patterns that determine the success of a game.
 
-### Forecasting the number of taxi orders for the next hour
+### [Forecasting the number of taxi orders for the next hour](https://github.com/tereheadaega/projects/tree/main/Forecasting%20the%20number%20of%20taxi%20orders%20for%20the%20next%20hour)
 content: Development of a system for predicting the number of taxi orders.
 
-### Comment classification
+### [Comment classification](https://github.com/tereheadaega/projects/tree/main/Comment%20classification)
 content: Definition of comments toxicity .
 
-### Photo processing
+### [Photo processing](https://github.com/tereheadaega/projects/tree/main/Photo%20processing)
 content: Determination of age from a photo.

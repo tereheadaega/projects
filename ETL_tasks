@@ -1,0 +1,428 @@
+# import needed libraries
+from airflow.decorators import dag, task
+from airflow.operators.python import get_current_context
+from datetime import datetime, timedelta
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import pandahouse as ph
+import requests
+import seaborn as sns
+import telegram
+import io
+from io import StringIO
+
+# access parameters
+connection = {
+    'host': '**********',
+                      'database':'simulator_20220920',
+                      'user':'student', 
+                      'password':'*******'
+                     }
+
+# telegram bot access
+bot  = telegram.Bot(token= '******')
+
+# chat id to which reports will be sent
+chat_id = *****
+
+
+# Dags arguments
+default_args = {
+    'owner': 'm-keller-11',
+    'depends_on_past': False,
+    'retries': 1,
+    'retry_delay': timedelta(minutes=1),
+    'start_date': datetime(2022, 10, 10),
+}
+
+# Shedule
+schedule_interval = '0 11 * * *'
+
+
+
+# Dag creating
+@dag(default_args=default_args, schedule_interval=schedule_interval, catchup=False, tags=['m-keller-11'])
+def a_keller_hw7_unified_report():
+    @task()
+    def extract_df_feed():
+        feed_numbers = '''
+        SELECT  CAST(time as DATE) as date,
+                count(DISTINCT user_id) as DAU,
+                sum(action = 'view') as views,
+                sum(action = 'like') as likes,
+                likes/views as ctr
+        FROM simulator_20220920.feed_actions 
+        WHERE date = today() - 1 OR 
+              date = today() - 7 OR 
+              date = today() - 30
+        GROUP BY date
+        '''
+        df_feed = ph.read_clickhouse(feed_numbers, connection=connection)
+        return df_feed
+
+    @task()
+    def extract_messages_numbers():
+        messages_numbers = '''
+        SELECT  CAST(time as DATE) as date,
+                count(DISTINCT user_id) as DAU,
+                COUNT(user_id) as messages
+        FROM simulator_20220920.message_actions
+        WHERE date = today() - 1 OR 
+              date = today() - 7 OR 
+              date = today() - 30
+        GROUP BY date
+        '''
+        df_messages = ph.read_clickhouse(messages_numbers, connection=connection)
+        return df_messages
+
+    @task()
+    def extract_q_kernel_moth():
+        q_kernel_moth = '''
+        SELECT COUNT(DISTINCT user_id) as c
+        FROM simulator_20220920.feed_actions 
+        WHERE user_id in (
+        SELECT  user_id as users
+        FROM simulator_20220920.feed_actions 
+        GROUP BY users
+        HAVING min(toDate(time)) <= today()-44 ) AND toDate(time) = today()-30
+        '''
+        feed_kernel_moth = ph.read_clickhouse(q_kernel_moth, connection=connection)
+        return feed_kernel_moth
+
+    @task()
+    def extract_feed_kernel_week():
+        q_kernel_week = '''
+        SELECT COUNT(DISTINCT user_id) as c
+        FROM simulator_20220920.feed_actions 
+        WHERE user_id in (
+        SELECT  user_id as users
+        FROM simulator_20220920.feed_actions 
+        GROUP BY users
+        HAVING min(toDate(time)) <= today()-21 ) AND toDate(time) = today()-7
+        '''
+        feed_kernel_week = ph.read_clickhouse(q_kernel_week, connection=connection)
+        return feed_kernel_week
+
+    
+    @task()
+    def extract_feed_kernel_yesterday():
+        q_kernel_yesterday = '''
+        SELECT COUNT(DISTINCT user_id) as c
+        FROM simulator_20220920.feed_actions 
+        WHERE user_id in (
+        SELECT  user_id as users
+        FROM simulator_20220920.feed_actions 
+        GROUP BY users
+        HAVING min(toDate(time)) <= today()-15 ) AND toDate(time) = today()-1
+        '''
+        feed_kernel_yesterday = ph.read_clickhouse(q_kernel_yesterday, connection=connection)
+        return feed_kernel_yesterday
+
+        
+    @task()
+    def extract_message_kernel_month():
+        qm_kernel_month = '''
+        SELECT COUNT(DISTINCT user_id) as c
+        FROM simulator_20220920.message_actions
+        WHERE user_id in (
+        SELECT  user_id as users
+        FROM simulator_20220920.message_actions
+        GROUP BY users
+        HAVING min(toDate(time)) <= today()-44 ) AND toDate(time) = today()-30
+        '''
+        message_kernel_month = ph.read_clickhouse(qm_kernel_month, connection=connection)
+        return message_kernel_month
+
+  
+    @task()
+    def extract_message_kernel_week():
+        qm_kernel_week = '''
+        SELECT COUNT(DISTINCT user_id) as c
+        FROM simulator_20220920.message_actions
+        WHERE user_id in (
+        SELECT  user_id as users
+        FROM simulator_20220920.message_actions
+        GROUP BY users
+        HAVING min(toDate(time)) <= today()-21 ) AND toDate(time) = today()-7
+        '''
+        message_kernel_week = ph.read_clickhouse(qm_kernel_week, connection=connection)
+        return message_kernel_week
+
+    
+    @task()
+    def extract_message_kernel_yesterday():
+        qm_kernel_yesterday = '''
+        SELECT COUNT(DISTINCT user_id) as c
+        FROM simulator_20220920.message_actions
+        WHERE user_id in (
+        SELECT  user_id as users
+        FROM simulator_20220920.message_actions
+        GROUP BY users
+        HAVING min(toDate(time)) <= today()-15 ) AND toDate(time) = today()-1
+        '''
+        message_kernel_yesterday = ph.read_clickhouse(qm_kernel_yesterday, connection=connection)
+        return message_kernel_yesterday
+
+    @task()
+    def extract_booth_month():        
+        q_booth_month = '''
+        SELECT COUNT(DISTINCT user_id) as c
+        FROM simulator_20220920.feed_actions
+        WHERE user_id in (
+        SELECT  user_id as users
+        FROM simulator_20220920.message_actions
+        GROUP BY users
+        HAVING toDate(time) = today()-30)
+        HAVING toDate(time) = today()-30
+        '''
+        booth_month = ph.read_clickhouse(q_booth_month, connection=connection)
+        return booth_month
+        
+    @task()
+    def extract_booth_week():        
+        q_booth_week = '''
+        SELECT COUNT(DISTINCT user_id) as c
+        FROM simulator_20220920.feed_actions
+        WHERE user_id in (
+        SELECT  user_id as users
+        FROM simulator_20220920.message_actions
+        GROUP BY users
+        HAVING toDate(time) = today()-7)
+        HAVING toDate(time) = today()-7
+        '''
+        booth_week = ph.read_clickhouse(q_booth_week, connection=connection)
+        return booth_week
+
+    @task()
+    def extract_booth_yesterday(): 
+        q_booth_yesterday = '''
+        SELECT COUNT(DISTINCT user_id) as c
+        FROM simulator_20220920.feed_actions
+        WHERE user_id in (
+        SELECT  user_id as users
+        FROM simulator_20220920.message_actions
+        GROUP BY users
+        HAVING toDate(time) = today()-7)
+        HAVING toDate(time) = today()-7
+        '''
+        booth_yesterday = ph.read_clickhouse(q_booth_yesterday, connection=connection)
+        return booth_yesterday
+        
+    @task()
+    def extract_df_heat_feed():
+        q_df = '''
+        SELECT toString(date) as date, 
+               toString(start_date) as start_date, 
+               count(user_id) as active_users
+        FROM
+        (select user_id, min(toDate(time)) as start_date
+        from simulator_20220920.feed_actions
+        GROUP BY user_id
+        having start_date >= today()- 16
+        ) t1
+        JOIN
+        (select distinct user_id, toDate(time) as date, source
+        from simulator_20220920.feed_actions) t2
+        using user_id
+        group by date, start_date '''
+
+        df_heat_feed = ph.read_clickhouse(q_df, connection=connection)
+        return df_heat_feed
+
+    @task()
+    def extract_df_heat_message():
+        q_df_m = '''
+        SELECT toString(date) as date, 
+               toString(start_date) as start_date, 
+               count(user_id) as active_users
+        FROM
+        (select user_id, min(toDate(time)) as start_date
+        from simulator_20220920.message_actions
+        group by user_id
+        having start_date >= today()- 16
+        ) t1
+        JOIN
+        (select distinct user_id, toDate(time) as date, source
+        from simulator_20220920.message_actions) t2
+        using user_id
+        group by date, start_date '''
+
+        df_heat_message = ph.read_clickhouse(q_df_m, connection=connection)
+        return df_heat_message
+
+    @task()
+    def extract_file():
+        q_top_posts = '''
+        SELECT  post_id,
+                COUNT(DISTINCT user_id) as coverage,
+                sum(action = 'view') as views,
+                sum(action = 'like') as likes,
+                likes/views as ctr
+        FROM simulator_20220920.feed_actions 
+        GROUP BY post_id
+        ORDER BY coverage DESC
+        LIMIT 20'''
+        df_posts = ph.read_clickhouse(q_top_posts, connection=connection)
+        return df_posts
+
+
+    @task()
+    def transform_text(df_feed, df_messages, feed_kernel_moth, feed_kernel_week, feed_kernel_yesterday,\
+                       message_kernel_month, message_kernel_week, message_kernel_yesterday, \
+                       booth_month, booth_week, booth_yesterday):
+        def sumbol(number):
+            if number > 0:
+                return '📈'
+            else:
+                return '📉'
+        yesterday = str(df_feed.loc[2,'date'])[:10]
+
+        DAU = df_feed.loc[2,'DAU']
+        DAU_week = df_feed.loc[1,'DAU']
+        DAU_month = df_feed.loc[0,'DAU']
+
+        DAU_week_perc = round(((DAU+1-DAU_week-1)*100)/DAU,1)
+        DAU_month_perc = round(((DAU+1-DAU_month-1)*100)/DAU,1)
+
+
+        views = df_feed.loc[2,'views']
+        views_week = df_feed.loc[1,'views']
+        views_month = df_feed.loc[0,'views']
+
+        views_week_perc = round(((views+1-views_week-1)*100)/views,1)
+        views_month_perc = round(((views+1-views_month-1)*100)/views,1)
+
+
+        likes = df_feed.loc[2,'likes']
+        likes_week = df_feed.loc[1,'likes']
+        likes_month = df_feed.loc[0,'likes']
+
+        likes_week_perc = round(((likes+1-likes_week-1)*100)/likes,1)
+        likes_month_perc = round(((likes+1-likes_month-1)*100)/likes,1)
+
+
+        ctr = round(df_feed.loc[2,'ctr'],4)
+        ctr_week = round(df_feed.loc[1,'ctr'],4)
+        ctr_month = round(df_feed.loc[0,'ctr'],4)
+
+        ctr_week_perc = round(((ctr+1-ctr_week-1)*100)/ctr,1)
+        ctr_month_perc = round(((ctr+1-ctr_month-1)*100)/ctr,1)
+
+
+        DAUm = df_messages.loc[2,'DAU']
+        DAUm_week = df_messages.loc[1,'DAU']
+        DAUm_month = df_messages.loc[0,'DAU']
+
+        DAUm_week_perc = round(((DAUm+1-DAUm_week-1)*100)/DAUm,1)
+        DAUm_month_perc = round(((DAUm+1-DAUm_month-1)*100)/DAUm,1)
+
+
+        messages = df_messages.loc[2,'messages']
+        messages_week = df_messages.loc[1,'messages']
+        messages_month = df_messages.loc[0,'messages']
+
+        messages_week_perc = round(((messages+1-messages_week-1)*100)/messages,1)
+        messages_month_perc = round(((messages+1-messages_month-1)*100)/messages,1)
+
+
+        DAUkm = feed_kernel_moth.loc[0,'c']
+        DAUkw = feed_kernel_week.loc[0,'c']
+        DAUky = feed_kernel_yesterday.loc[0,'c']
+        DAUk_week_perc = round(((DAUky+1-DAUkw-1)*100)/DAUky,1)
+        DAUk_month_perc = round(((DAUky+1-DAUkm-1)*100)/DAUky,1)
+
+        DAUmm = message_kernel_month.loc[0,'c']
+        DAUmw = message_kernel_week.loc[0,'c']
+        DAUmy = message_kernel_yesterday.loc[0,'c']
+        DAUm_week_perc = round(((DAUmy+1-DAUmw-1)*100)/DAUmy,1)
+        DAUm_month_perc = round(((DAUmy+1-DAUmm-1)*100)/DAUmy,1)
+
+        DAUbm = booth_month.loc[0,'c']
+        DAUbw = booth_week.loc[0,'c']
+        DAUby = booth_yesterday.loc[0,'c']
+        DAUb_week_perc = round(((DAUby+1-DAUbw-1)*100)/DAUby,1)
+        DAUb_month_perc = round(((DAUby+1-DAUbm-1)*100)/DAUby,1)
+        
+        message_test = f'📄Новостная лента.\n\
+        Ключевые метрики за {yesterday} | неделю назад | месяц назад.\n \
+        DAU: {sumbol(DAU_month_perc)} {DAU} |{DAU_week_perc} % ({DAU_week})| {DAU_month_perc} % ({DAU_month})|\n \
+        views: {sumbol(views_month_perc)} {views} | {views_week_perc} % ({views_week})| {views_month_perc}% ({views_month})|\n \
+        likes: {sumbol(likes_month_perc)} {likes} | {likes_week_perc} % ({likes_week})| {likes_month_perc}% ({likes_month_perc})|\n \
+        CTR: {sumbol(ctr_month_perc)} {ctr} | {ctr_week_perc} % ({ctr_week})| {ctr_month_perc}% ({ctr_month})| \n  \
+        Ядро аудитории (пользуются приложением больше двух недель) \n \
+        DAU: {sumbol(DAUk_month_perc)}  {DAUky} |{DAUk_week_perc} % ({DAUkw})| {DAUk_month_perc} % ({DAUkm})|\n \n \
+        📝Лента сообщений \n \
+        DAU: {sumbol(DAUm_month_perc)} {DAUm} |{DAUm_week_perc} % ({DAUm_week})| {DAUm_month_perc} % ({DAUm_month})|\n \
+        messages: {sumbol(messages_month_perc)}  {messages} |{messages_week_perc} % ({messages_week})| {messages_month_perc} % ({messages_month})|\n \
+        Ядро аудитории (пользуются приложением больше двух недель) \n \
+        DAU: {sumbol(DAUm_month_perc)}  {DAUmy} |{DAUm_week_perc} % ({DAUmw})| {DAUm_month_perc} % ({DAUmm})|\n \n \
+        📬 Пользователи обоих продуктов \n \
+        DAU: {sumbol(DAUb_month_perc)}  {DAUby} |{DAUb_week_perc} % ({DAUbw})| {DAUb_month_perc} % ({DAUbm})|\
+        '
+        return message_test
+    
+    
+    @task()
+    def transform_picture(df_heat_feed, df_heat_message):
+        df_heat_f = df_heat_feed.pivot_table(index = 'start_date',columns = 'date', values= 'active_users', aggfunc= 'mean')
+        df_heat_m = df_heat_message.pivot_table(index = 'start_date',columns = 'date',\
+                                                values= 'active_users', aggfunc= 'mean')
+
+        fig, axes = plt.subplots(2, 1, figsize=(20,24))
+        fig.subplots_adjust(hspace=0.3)
+
+        sns.heatmap(ax=axes[0], data =df_heat_f, annot=True,  fmt=".0f")
+        axes[0].set_xlabel('дата', size=14)
+        axes[0].set_ylabel('первый день в ленте новостей', size=14)
+        axes[0].set_title('DAU когорт до двух недель(Лента)', fontsize=14, fontweight="bold")
+        sns.heatmap(ax=axes[1], data =df_heat_m, annot=True,  fmt=".0f")
+        axes[1].set_xlabel('дата', size=14)
+        axes[1].set_ylabel('первый день в мессенджере', size=14)
+        axes[1].set_title('DAU когорт до двух недель(Сообщения)', fontsize=14, fontweight="bold")
+
+
+        plot_object_photo = io.BytesIO()
+        plt.savefig(plot_object_photo)
+        plot_object_photo.seek(0)
+        plot_object_photo.name = 'report.png'
+        plt.close()
+        return plot_object_photo
+    
+    
+    @task()
+    def transform_file(df_posts):
+        file_object = io.StringIO()
+        df_posts.to_csv(file_object)
+        file_object.name = 'top_20_posts.csv'
+        file_object.seek(0)
+        return file_object
+    
+    @task()
+    def load(message_test, plot_object_photo, file_object):
+        bot.sendMessage(chat_id=chat_id, text= message_test)
+        bot.sendPhoto(chat_id=chat_id, photo=plot_object_photo)
+        bot.sendDocument(chat_id=chat_id, document=file_object)
+        
+    df_feed = extract_df_feed()
+    df_messages = extract_messages_numbers()
+    feed_kernel_moth = extract_q_kernel_moth()
+    feed_kernel_week = extract_feed_kernel_week()
+    feed_kernel_yesterday = extract_feed_kernel_yesterday()
+    message_kernel_month = extract_message_kernel_month()
+    message_kernel_week = extract_message_kernel_week()
+    message_kernel_yesterday = extract_message_kernel_yesterday()
+    booth_month = extract_booth_month()
+    booth_week = extract_booth_week()
+    booth_yesterday = extract_booth_yesterday()
+    df_heat_feed = extract_df_heat_feed()
+    df_heat_message = extract_df_heat_message()
+    df_posts = extract_file()
+    message_test = transform_text(df_feed, df_messages, feed_kernel_moth, feed_kernel_week, feed_kernel_yesterday,\
+                       message_kernel_month, message_kernel_week, message_kernel_yesterday, \
+                       booth_month, booth_week, booth_yesterday)
+    plot_object_photo = transform_picture(df_heat_feed, df_heat_message)
+    file_object = transform_file(df_posts)
+    load(message_test, plot_object_photo, file_object)
+        
+a_keller_hw7_unified_report = a_keller_hw7_unified_report()
