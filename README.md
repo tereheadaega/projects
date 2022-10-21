@@ -46,3 +46,6 @@ content: Definition of comments toxicity .
 
 ### [Photo processing](https://github.com/tereheadaega/projects/tree/main/Photo%20processing)
 content: Determination of age from a photo.
+
+### [ETL tasks](https://github.com/tereheadaega/projects/tree/main/ETL%20tasks)
+content: Projects helping to automate processes-  implemented using Airflow.
